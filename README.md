@@ -2,6 +2,79 @@
 ---
 
 <br>
+
+## ⚙️ 개발 환경 설정
+
+> 아래 지침에 따라 가상환경을 구성하고 필수 라이브러리를 설치하세요.  
+> 운영체제에 따라 명령어가 다릅니다.
+
+---
+
+### 🍎 macOS / 🐧 Linux
+
+```bash
+# 1. 레포지토리 클론
+git clone https://github.com/your-id/eyeon-ai.git
+cd eyeon-ai
+
+# 2. 가상환경 생성
+python3 -m venv venv
+
+# 3. 가상환경 활성화
+source venv/bin/activate
+
+# 4. 필수 라이브러리 설치
+pip install -r requirements.txt
+```
+
+---
+
+### 🪟 Windows (CMD 또는 PowerShell)
+
+```bash
+:: 1. 레포지토리 클론
+git clone https://github.com/your-id/eyeon-ai.git
+cd eyeon-ai
+
+:: 2. 가상환경 생성
+python -m venv venv
+
+:: 3. 가상환경 활성화
+venv\Scripts\activate        :: (CMD)
+.\venv\Scripts\Activate.ps1  :: (PowerShell)
+
+:: 4. 필수 라이브러리 설치
+pip install -r requirements.txt
+```
+
+---
+
+### ⛔ 가상환경 종료
+
+> 가상환경을 종료하려면 아래 명령어를 입력하세요 (운영체제 공통):
+
+```bash
+deactivate
+```
+
+---
+
+### 🧪 VS Code 설정 (Python 인터프리터 + Jupyter 커널 연동)
+
+#### 🐍 Python 인터프리터 선택
+1. `Ctrl + Shift + P`를 눌러 **Command Palette** 열기
+2. `Python: Select Interpreter` 검색 후 실행
+3. `./venv/bin/python` 또는 `.\venv\Scripts\python.exe` 선택
+
+#### 📓 Jupyter Notebook 커널 연결
+- `.ipynb` 파일 상단의 커널 선택 영역에서 `venv` 가상환경 커널 선택
+- 목록에 없으면:
+  ```bash
+  python -m ipykernel install --user --name=venv
+  ```
+  위 명령어로 Jupyter 커널에 가상환경을 등록한 뒤 다시 시도
+
+---
  
 ## ✉️ Commit Convention
 

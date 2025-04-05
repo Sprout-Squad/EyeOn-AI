@@ -1,0 +1,18 @@
+# 가상환경
+venv/
+
+# 파이썬 캐시
+__pycache__/
+*.pyc
+
+# Jupyter 자동 백업
+*.ipynb_checkpoints
+
+# 대용량 파일
+data/**/*.zip
+data/**/*.pdf
+data/**/*.png
+data/**/*.jpg
+
+# 기타
+.DS_Store
