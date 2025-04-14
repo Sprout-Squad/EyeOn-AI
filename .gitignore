@@ -9,10 +9,10 @@ __pycache__/
 *.ipynb_checkpoints
 
 # 대용량 파일
-data/**/*.zip
-data/**/*.pdf
-data/**/*.png
-data/**/*.jpg
+## data/**/*.zip
+## data/**/*.pdf
+## data/**/*.png
+## data/**/*.jpg
 
 # 기타
 .DS_Store
