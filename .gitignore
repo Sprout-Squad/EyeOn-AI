@@ -14,5 +14,8 @@ __pycache__/
 ## data/**/*.png
 ## data/**/*.jpg
 
+# 학습 모델
+model/
+
 # 기타
 .DS_Store
