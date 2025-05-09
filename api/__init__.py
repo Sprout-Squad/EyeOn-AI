@@ -2,4 +2,4 @@ from flask import Blueprint
 
 api_blueprint = Blueprint('api', __name__)
 
-from . import scan, predict
+from . import scan, predict, predict_create
