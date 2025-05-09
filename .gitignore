@@ -20,3 +20,6 @@ model/
 # 기타
 .DS_Store
 .env
+data/*
+
+!data/label_keywords.json
