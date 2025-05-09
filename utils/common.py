@@ -71,3 +71,17 @@ def group_lines_by_y(bboxes, tolerance=5):
             y_groups.append(y)
             norm_y_map[y] = y
     return norm_y_map
+
+def group_lines_by_y_for_filter(bboxes, tolerance=5):
+    lines = {}
+    for i, box in enumerate(bboxes):
+        y1 = box[1]
+        found = False
+        for ref_y in lines:
+            if abs(ref_y - y1) <= tolerance:
+                lines[ref_y].append(i)
+                found = True
+                break
+        if not found:
+            lines[y1] = [i]
+    return lines
