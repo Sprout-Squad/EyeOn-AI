@@ -2,13 +2,15 @@ from flask import Response
 from collections import OrderedDict
 import json
 
-def success(message, code=200, filename=None, base64_str=None):
+def success(message, code=200, filename=None, base64_str=None, **kwargs):
     res = OrderedDict()
     res["isSuccess"] = True
     res["httpStatus"] = code
     res["message"] = message
     res["filename"] = filename
     res["base64"] = base64_str
+    for key, value in kwargs.items():
+        res[key] = value
     return Response(json.dumps(res), status=code, mimetype='application/json')
 
 def error(message, code=400):
