@@ -16,6 +16,11 @@ if not secret_key or not url:
 
 # --- OCR 호출 및 결과 파일 저장 ---
 def call_clova_ocr(base64_string: str, file_ext: str = "jpg") -> str:
+    if not base64_string:
+        raise ValueError("이미지 데이터가 비어 있습니다.")
+    if file_ext.lower() not in {"jpg", "jpeg", "png"}:
+        raise ValueError(f"지원하지 않는 확장자입니다: {file_ext}")
+
     payload = {
         "version": "V2",
         "requestId": str(uuid.uuid4()),

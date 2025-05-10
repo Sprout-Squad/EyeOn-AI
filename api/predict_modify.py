@@ -22,9 +22,6 @@ def predict_modify():
         base64_image = data.get("image_base64")
         file_ext = data.get("file_ext", "jpg").lower()
 
-        if not base64_image:
-            return jsonify({"error": "image_base64 필드가 비어 있습니다."}), 400
-
         # 1. OCR 요청 및 결과 저장
         ocr_filename = call_clova_ocr(base64_image, file_ext)
         ocr_path = os.path.join(DATA_DIR, ocr_filename)
@@ -64,13 +61,16 @@ def predict_modify():
             output_path=os.path.join(DATA_DIR, 'ocr_tokens_filtered.json')
         )
 
-        # 6. LayoutLM 추론 (TODO)
+        # 6. LayoutLM 추론
         with open(os.path.join(DATA_DIR, 'ocr_tokens_filtered.json'), 'r', encoding='utf-8') as f:
             filtered = json.load(f)
         result = run_layoutlm_inference(filtered['tokens'], filtered['bboxes'])
 
         # 7. 필터링된 결과 기준으로 성공 반환
         return success("수정용 분석 성공", code=200, filename="ocr_tokens_filtered.json", base64_str=None, result=result)
+    
+    except ValueError as ve:
+        return error(str(ve), code=400)
 
     except Exception as e:
-        return error(f"예외 발생: {str(e)}", code=500)
+        return error(str(e), code=500)

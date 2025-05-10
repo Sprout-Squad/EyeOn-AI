@@ -20,15 +20,12 @@ def predict_create():
         # base64 인코딩된 이미지와 확장자 받아오기
         base64_image = data.get("image_base64")
         file_ext = data.get("file_ext", "jpg").lower()
-
-        if not base64_image:
-            return jsonify({"error": "image_base64 필드가 비어 있습니다."}), 400
-
+        
         # 1. OCR 요청 및 결과 저장
         ocr_filename = call_clova_ocr(base64_image, file_ext)
         ocr_path = os.path.join(DATA_DIR, ocr_filename)
 
-        # ✅ OCR 결과 파일 생성될 때까지 기다림 (최대 5초)
+        # OCR 결과 파일 생성될 때까지 기다림 (최대 5초)
         for _ in range(10):
             if os.path.exists(ocr_path):
                 break
@@ -55,11 +52,15 @@ def predict_create():
             output_path=os.path.join(DATA_DIR, 'ocr_tokens.json')
         )
 
-        # 5. LayoutLM 추론 (TODO)
+        # 5. LayoutLM 추론
         result = run_layoutlm_inference(tokens, bboxes)
 
         # 6. LayoutLM 추론 결과 반환
-        return success("분석 성공", code=200, filename="ocr_tokens.json", base64_str=None, result=result)
+        return success("분석 성공", code=200, filename="ocr_tokens.json", base64_str=None, result=result)   
     
+    except ValueError as ve:
+        return error(str(ve), code=400)
+
     except Exception as e:
-        return error(f"예외 발생: {str(e)}", code=500)
+        return error(str(e), code=500)
+

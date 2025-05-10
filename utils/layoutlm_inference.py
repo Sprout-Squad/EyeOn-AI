@@ -5,6 +5,9 @@ from utils.model_loader import get_model_and_tokenizer
 from transformers import LayoutLMForTokenClassification, LayoutLMTokenizerFast
 
 def run_layoutlm_inference(tokens, bboxes):
+    if not tokens or not bboxes:
+        raise ValueError("토큰 또는 바운딩박스가 비어 있습니다.")
+    
     # 문서 유형 자동 감지
     doctype = detect_doc_type(tokens)
     if not doctype:
