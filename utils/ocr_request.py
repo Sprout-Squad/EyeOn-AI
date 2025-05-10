@@ -4,7 +4,7 @@ import time
 import json
 import requests
 from dotenv import load_dotenv
-from utils.common import save_json  # ✅ 공통 저장 함수 사용
+from utils.common import save_json
 
 # --- 환경 변수 로드 ---
 load_dotenv()

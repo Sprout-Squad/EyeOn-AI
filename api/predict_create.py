@@ -6,6 +6,7 @@ from utils.table_tokens import run_table_token_extraction
 from utils.text_tokens import run_text_token_extraction
 from utils.merge_tokens import run_merge_tokens
 from utils.response_util import success, error
+from utils.layoutlm_inference import run_layoutlm_inference
 
 # 프로젝트 루트 경로 기준 설정
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -55,10 +56,10 @@ def predict_create():
         )
 
         # 5. LayoutLM 추론 (TODO)
-        # result = run_layoutlm_inference(tokens, bboxes)
+        result = run_layoutlm_inference(tokens, bboxes)
 
-        # 6. LayoutLM 추론 결과 대신 현재는 토큰과 박스만 반환
-        return success("분석 성공", code=200, filename="ocr_tokens.json", base64_str=None)
-
+        # 6. LayoutLM 추론 결과 반환
+        return success("분석 성공", code=200, filename="ocr_tokens.json", base64_str=None, result=result)
+    
     except Exception as e:
         return error(f"예외 발생: {str(e)}", code=500)
