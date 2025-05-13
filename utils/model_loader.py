@@ -10,7 +10,10 @@ def get_model_and_tokenizer(doctype, base_path=os.path.join(BASE_DIR, "model")):
         raise ValueError(f"모델 경로가 존재하지 않습니다: {model_path}")
 
     if doctype not in model_cache:
-        model = LayoutLMForTokenClassification.from_pretrained(model_path)
+        model = LayoutLMForTokenClassification.from_pretrained(
+            model_path,
+            use_safetensors=True
+        )
         tokenizer = LayoutLMTokenizerFast.from_pretrained(model_path)
         model.eval()
         model_cache[doctype] = (model, tokenizer)
