@@ -111,15 +111,15 @@ def run_filter_tokens(
     DOC_TYPE = detect_doc_type(tokens)
     if DOC_TYPE is None:
         raise ValueError("문서 유형을 감지할 수 없습니다.")
+    
+    with open(label_keyword_path, 'r', encoding='utf-8') as f:
+        label_keywords = json.load(f)
 
     try:
         field_keywords = label_keywords[DOC_TYPE]["field_keywords"]
     except KeyError:
         raise ValueError(f"label_keywords.json에 '{DOC_TYPE}' 항목이 없습니다.")
     
-    with open(label_keyword_path, 'r', encoding='utf-8') as f:
-        label_keywords = json.load(f)
-
     label_keywords = load_json(label_keyword_path)
     field_keywords = label_keywords[DOC_TYPE]["field_keywords"]
     group_keywords = label_keywords[DOC_TYPE]["group_keywords"]
