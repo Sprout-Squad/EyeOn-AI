@@ -6,7 +6,7 @@ from utils.common import (
     save_json
 )
 
-ignore_tokens = {"만원", "만세", "~", "=", "-", "점", "급", "cm", "kg"}
+ignore_tokens = {"만원", "만세", "=", "-", "점", "급", "cm", "kg"}
 BLANK_TOKEN = "[BLANK]"
 
 def run_table_token_extraction(input_path='../data/ocr_result.json', output_path='../data/ocr_tokens_from_table.json'):
@@ -32,7 +32,6 @@ def run_table_token_extraction(input_path='../data/ocr_result.json', output_path
                     if 'cellWords' in line:
                         text += ''.join(word['inferText'] for word in line['cellWords'])
                 text = text.strip()
-                text = remove_number_dot_prefix(text)
                 if text in ignore_tokens or text == '':
                     text = BLANK_TOKEN
 
