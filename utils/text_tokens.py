@@ -109,6 +109,48 @@ def run_text_token_extraction(input_path='../data/ocr_result.json', output_path=
     norm_y_map = group_lines_by_y(bboxes, tolerance=ROW_TOL)
     tokens_with_boxes = sorted(zip(tokens, bboxes), key=lambda x: (norm_y_map[x[1][1]], x[1][0]))
     tokens, bboxes = zip(*tokens_with_boxes)
+    tokens = list(tokens)
+    bboxes = list(bboxes)
 
-    save_json(output_path, {"tokens": list(tokens), "bboxes": list(bboxes)})
+    # ":" 다음에 [BLANK] 삽입
+    new_tokens = []
+    new_bboxes = []
+    for i in range(len(tokens) - 1):
+        curr_token = tokens[i]
+        next_token = tokens[i + 1]
+        curr_box = bboxes[i]
+        next_box = bboxes[i + 1]
+
+        new_tokens.append(curr_token)
+        new_bboxes.append(curr_box)
+
+        if curr_token == ":":
+            if abs(curr_box[1] - next_box[1]) <= ROW_TOL:
+                # 같은 줄: ":" 오른쪽과 다음 토큰 왼쪽 사이
+                blank_box = [curr_box[2], min(curr_box[1], next_box[1]), next_box[0], max(curr_box[3], next_box[3])]
+            else:
+                # 다른 줄: 고정폭 박스 생성
+                blank_box = [curr_box[2], curr_box[1], curr_box[2] + 500, curr_box[3]]
+            new_tokens.append(BLANK_TOKEN)
+            new_bboxes.append(blank_box)
+
+        # "년", "월", "일" 앞에도 [BLANK] 삽입
+        if next_token in FIXED_BLANK_WIDTH and len(next_token.strip()) == 1:
+            # 같은 줄이면 ":"처럼 사이에 넣고, 아니면 왼쪽에 고정폭 삽입
+            if abs(curr_box[1] - next_box[1]) <= ROW_TOL:
+                blank_box = [curr_box[2], min(curr_box[1], next_box[1]), next_box[0], max(curr_box[3], next_box[3])]
+            else:
+                # 고정 폭 왼쪽 삽입
+                w = FIXED_BLANK_WIDTH[next_token]
+                blank_box = [next_box[0] - w, next_box[1], next_box[0], next_box[3]]
+            new_tokens.append(BLANK_TOKEN)
+            new_bboxes.append(blank_box)
+
+    # 마지막 토큰 추가
+    new_tokens.append(tokens[-1])
+    new_bboxes.append(bboxes[-1])
+
+    # 저장
+    save_json(output_path, {"tokens": new_tokens, "bboxes": new_bboxes})
     print(f"✅ 텍스트 토큰 추출 완료: {output_path}")
+    
