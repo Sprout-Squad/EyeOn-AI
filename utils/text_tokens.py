@@ -124,27 +124,46 @@ def run_text_token_extraction(input_path='../data/ocr_result.json', output_path=
         new_tokens.append(curr_token)
         new_bboxes.append(curr_box)
 
+        # ":" 다음에 [BLANK] 삽입
         if curr_token == ":":
-            if abs(curr_box[1] - next_box[1]) <= ROW_TOL:
-                # 같은 줄: ":" 오른쪽과 다음 토큰 왼쪽 사이
-                blank_box = [curr_box[2], min(curr_box[1], next_box[1]), next_box[0], max(curr_box[3], next_box[3])]
-            else:
-                # 다른 줄: 고정폭 박스 생성
-                blank_box = [curr_box[2], curr_box[1], curr_box[2] + 500, curr_box[3]]
-            new_tokens.append(BLANK_TOKEN)
-            new_bboxes.append(blank_box)
-
+            # (인)이 뒤쪽에 있는지 검사
+            j = i + 1
+            found_in = False
+            while j < len(tokens):
+                if tokens[j] == "(인)":
+                    found_in = True
+                    break
+                elif tokens[j] != BLANK_TOKEN:
+                    # : 와 (인) 사이에 글자가 있음
+                    found_in = False
+                    break
+                j += 1
+        
+            if found_in:
+                # 삽입 조건 충족
+                if abs(curr_box[1] - next_box[1]) <= ROW_TOL:
+                    blank_box = [curr_box[2], min(curr_box[1], next_box[1]), next_box[0], max(curr_box[3], next_box[3])]
+                else:
+                    blank_box = [curr_box[2], curr_box[1], curr_box[2] + 500, curr_box[3]]
+                new_tokens.append(BLANK_TOKEN)
+                new_bboxes.append(blank_box)
+        
         # "년", "월", "일" 앞에도 [BLANK] 삽입
         if next_token in FIXED_BLANK_WIDTH and len(next_token.strip()) == 1:
+            # ➕ 앞 토큰이 숫자면 BLANK 삽입하지 않음
+            if curr_token.isdigit():
+                continue
+            
             # 같은 줄이면 ":"처럼 사이에 넣고, 아니면 왼쪽에 고정폭 삽입
             if abs(curr_box[1] - next_box[1]) <= ROW_TOL:
                 blank_box = [curr_box[2], min(curr_box[1], next_box[1]), next_box[0], max(curr_box[3], next_box[3])]
             else:
-                # 고정 폭 왼쪽 삽입
                 w = FIXED_BLANK_WIDTH[next_token]
                 blank_box = [next_box[0] - w, next_box[1], next_box[0], next_box[3]]
+        
             new_tokens.append(BLANK_TOKEN)
             new_bboxes.append(blank_box)
+        
 
     # 마지막 토큰 추가
     new_tokens.append(tokens[-1])
